@@ -28,7 +28,7 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   /**************************************************************************** */
 
-  app.get("/filteredimage/", (req: Request, res: Response) => {
+  app.get("/filteredimage/", async (req: Request, res: Response) => {
     // destruct our query paramaters
     let { image_url } = req.query;
 
@@ -36,12 +36,17 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
     if (!image_url) {
       return res.status(400).send(`image_url is required`);
     }
-    const image = filterImageFromURL(image_url);
+    const image = await filterImageFromURL(image_url);
 
     // return the resulting list along with 200 success
-    res.status(200).send(image);
-
-    // deleteLocalFiles();
+    res.status(200).sendFile(image, {}, (error) => {
+      if (error) {
+        res.status(500).send({ message: "could not proccess request" });
+      } else {
+        // deleteLocalFiles();
+        deleteLocalFiles([image]);
+      }
+    });
   });
 
   //! END @TODO1
