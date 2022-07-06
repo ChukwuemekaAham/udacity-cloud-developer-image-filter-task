@@ -28,6 +28,22 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   /**************************************************************************** */
 
+  app.get("/filteredimage/", (req: Request, res: Response) => {
+    // destruct our query paramaters
+    let { image_url } = req.query;
+
+    // check to make sure the id is set
+    if (!image_url) {
+      return res.status(400).send(`image_url is required`);
+    }
+    const image = filterImageFromURL(image_url);
+
+    // return the resulting list along with 200 success
+    res.status(200).send(image);
+
+    // deleteLocalFiles();
+  });
+
   //! END @TODO1
 
   // Root Endpoint
